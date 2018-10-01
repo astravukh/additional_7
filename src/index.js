@@ -1,6 +1,6 @@
 
 module.exports = function solveSudoku(matrix) {
-    var array = [];
+    let array = [];
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
             array.push(new Cell(matrix[i][j], i , j));            
@@ -21,7 +21,7 @@ module.exports = function solveSudoku(matrix) {
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
       ];
 
-    for(cell of array){
+    for(let cell of array){
         result[cell.horizontal][cell.vertical] = cell.value;
     }
 
@@ -59,9 +59,9 @@ function setCan(arr) {
     let vertical = [];
     let horizontal = [];
     let square = [];
-    for(cell of arr){
+    for(let cell of arr){
         if (cell.value === 0) {
-            for(element of arr){                    
+            for(let element of arr){                    
                 if(element.value !== 0){
                     if (element.vertical === cell.vertical) {
                         vertical.push(element.value);
@@ -113,6 +113,7 @@ function Solution (arr){
                     if((element.value === 0) && (element.vertical === cell.vertical) && element !== cell){
                         if (element.can.indexOf(canValue) !== -1) {
                             temp = false;
+                            break;
                         }
                     }
                 }
@@ -131,6 +132,7 @@ function Solution (arr){
                     if((element.value === 0) && (element.horizontal === cell.horizontal) && element !== cell){
                         if (element.can.indexOf(canValue) !== -1) {
                             temp = false;
+                            break;
                         }
                     }
                 }
@@ -150,6 +152,7 @@ function Solution (arr){
                     if((element.value === 0) && (element.square === cell.square) && element !== cell){
                         if (element.can.indexOf(canValue) !== -1) {
                             temp = false;
+                            break;
                         }
                     }
                 }
@@ -233,6 +236,5 @@ function cloneArr(arr){
         result.push(new Cell(cell.value, cell.horizontal, cell.vertical));
     }
     return setCan(result);
-
 }
 
