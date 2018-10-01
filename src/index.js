@@ -9,7 +9,7 @@ module.exports = function solveSudoku(matrix) {
 
     array = findRecursive(array);    
     
-    const initial = [
+    const result = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -21,11 +21,11 @@ module.exports = function solveSudoku(matrix) {
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
       ];
 
-    array.forEach(element => {
-        initial[element.horizontal][element.vertical] = element.value;
-    });
+    for(cell of array){
+        result[cell.horizontal][cell.vertical] = cell.value;
+    }
 
-    return initial;
+    return result;
 }
 
 class Cell{
@@ -56,12 +56,12 @@ class Cell{
 }
 
 function setCan(arr) {
-    var vertical = [];
-    var horizontal = [];
-    var square = [];
-    arr.forEach(cell => {
+    let vertical = [];
+    let horizontal = [];
+    let square = [];
+    for(cell of arr){
         if (cell.value === 0) {
-            arr.forEach(element => {                    
+            for(element of arr){                    
                 if(element.value !== 0){
                     if (element.vertical === cell.vertical) {
                         vertical.push(element.value);
@@ -75,9 +75,9 @@ function setCan(arr) {
                         square.push(element.value);
                     }                                                
                 }
-            });
-            cell.can =[];
-            for(var i = 1; i <= 9; i++){
+            };
+            cell.can = [];
+            for(let i = 1; i <= 9; i++){
                 if (vertical.indexOf(i) === -1 && horizontal.indexOf(i) === -1 && square.indexOf(i) === -1) {                        
                     cell.can.push(i);
                 }
@@ -85,35 +85,55 @@ function setCan(arr) {
             vertical = [];
             horizontal = [];
             square = [];
-        }            
-    });
+        }         
+    }
     return arr;        
 }
 
 function Solution (arr){
     arr = setCan(arr);
-    var flag = true;
+    let flag = true;
+
     while(flag){
         flag = false;
-        arr.forEach(cell => {
+
+        for(let cell of arr){
             if(cell.value === 0 && cell.can.length === 1){
                 cell.value = cell.can[0];
                 cell.can = [];
                 arr = setCan(arr);
                 flag = true;    
             }        
-        });
-
-        arr.forEach(cell => {
-            cell.can.forEach(canValue => {
-                var temp = true;
-                arr.forEach(element => {
-                    if((element.value === 0) && (element.vertical === cell.vertical) && !(element.horizontal === cell.horizontal && element.vertical === cell.vertical)){
+        }
+        let temp = false;
+        for(let cell of arr){
+            for( let canValue of cell.can){
+                temp = true;
+                for(let element of arr){
+                    if((element.value === 0) && (element.vertical === cell.vertical) && element !== cell){
                         if (element.can.indexOf(canValue) !== -1) {
                             temp = false;
                         }
                     }
-                });
+                }
+                if (temp && cell.value === 0) {
+                    cell.value = canValue;
+                    cell.can = [];
+                    arr = setCan(arr);
+                    flag = true;
+                }
+            }               
+        }
+        for(let cell of arr){
+            for(let canValue of cell.can){
+                temp = true;
+                for(let element of arr){
+                    if((element.value === 0) && (element.horizontal === cell.horizontal) && element !== cell){
+                        if (element.can.indexOf(canValue) !== -1) {
+                            temp = false;
+                        }
+                    }
+                }
                 if (temp && cell.value === 0) {
                     cell.value = canValue;
                     cell.can = [];
@@ -121,18 +141,18 @@ function Solution (arr){
                     flag = true;
                 }
 
-            });               
-        });
-        arr.forEach(cell => {
-            cell.can.forEach(canValue => {
-                var temp = true;
-                arr.forEach(element => {
-                    if((element.value === 0) && (element.horizontal === cell.horizontal) && !(element.horizontal === cell.horizontal && element.vertical === cell.vertical)){
+            }               
+        }
+        for(let cell of arr){
+            for(let canValue of cell.can){
+                temp = true;
+                for(let element of arr){
+                    if((element.value === 0) && (element.square === cell.square) && element !== cell){
                         if (element.can.indexOf(canValue) !== -1) {
                             temp = false;
                         }
                     }
-                });
+                }
                 if (temp && cell.value === 0) {
                     cell.value = canValue;
                     cell.can = [];
@@ -140,27 +160,8 @@ function Solution (arr){
                     flag = true;
                 }
 
-            });               
-        });
-        arr.forEach(cell => {
-            cell.can.forEach(canValue => {
-                var temp = true;
-                arr.forEach(element => {
-                    if((element.value === 0) && (element.square === cell.square) && !(element.horizontal === cell.horizontal && element.vertical === cell.vertical)){
-                        if (element.can.indexOf(canValue) !== -1) {
-                            temp = false;
-                        }
-                    }
-                });
-                if (temp && cell.value === 0) {
-                    cell.value = canValue;
-                    cell.can = [];
-                    arr = setCan(arr);
-                    flag = true;
-                }
-
-            });               
-        });
+            }               
+        }
     }
     return arr;
 }
@@ -168,16 +169,16 @@ function Solution (arr){
 function findRecursive(arr, choise = 0){
     arr = Solution (arr);        
     let complete = true;
-    arr.forEach(element => {
+    for(let element of arr){
         if (element.value === 0) {
             complete = false;
         }
-    });
+    }
     if(complete){
         return arr;
     }
     else{
-        let arrTemp = JSON.parse(JSON.stringify(arr));
+        let arrTemp = cloneArr(arr);
         for (let el of arrTemp){
             if (el.can.length === 2) {
                 el.value = el.can[choise];
@@ -226,3 +227,12 @@ function findRecursive(arr, choise = 0){
         }
     }
 }
+function cloneArr(arr){
+    let result = [];
+    for(let cell of arr){        
+        result.push(new Cell(cell.value, cell.horizontal, cell.vertical));
+    }
+    return setCan(result);
+
+}
+
