@@ -161,26 +161,6 @@ function Solution (arr){
 
             });               
         });
-
-        arr.forEach(cell => {
-            cell.can.forEach(canValue => {
-                var temp = true;
-                arr.forEach(element => {
-                    if((element.value === 0) && (element.square === cell.square) && !(element.horizontal === cell.horizontal && element.vertical === cell.vertical)){
-                        if (element.can.indexOf(canValue) !== -1) {
-                            temp = false;
-                        }
-                    }
-                });
-                if (temp && cell.value === 0) {
-                    cell.value = canValue;
-                    cell.can = [];
-                    arr = setCan(arr);
-                    flag = true;
-                }
-
-            });               
-        });
     }
     return arr;
 }
