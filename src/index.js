@@ -1,31 +1,20 @@
 
 module.exports = function solveSudoku(matrix) {
     let array = [];
+
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-            array.push(new Cell(matrix[i][j], i , j));            
-        }        
+            array.push(new Cell(matrix[i][j], i , j));
+        }
     }
 
-    array = findRecursive(array);    
-    
-    const result = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0]
-      ];
+    array = findRecursive(array);
 
     for(let cell of array){
-        result[cell.horizontal][cell.vertical] = cell.value;
+        matrix[cell.horizontal][cell.vertical] = cell.value;
     }
 
-    return result;
+    return matrix;
 }
 
 class Cell{
@@ -33,24 +22,7 @@ class Cell{
         this.value = value;
         this.horizontal = horizontal;
         this.vertical = vertical;
-        this.square = this.setSquare(horizontal, vertical);
-    }
-    setSquare(horizontal, vertical){
-        if (horizontal<3) {
-            if(vertical < 3) return 1;
-            if(vertical < 6 && vertical > 2) return 2;
-            if(vertical < 9 && vertical > 5) return 3;            
-        }
-        if (horizontal<6 && horizontal > 2) {
-            if(vertical < 3) return 4;
-            if(vertical < 6 && vertical > 2) return 5;
-            if(vertical < 9 && vertical > 5) return 6;            
-        }
-        if (horizontal<9 && horizontal > 2) {
-            if(vertical < 3) return 7;
-            if(vertical < 6 && vertical > 2) return 8;
-            if(vertical < 9 && vertical > 5) return 9;            
-        }
+        this.square = Math.floor(horizontal/3) * 3 + Math.floor(vertical/3);
     }
 }
 
@@ -62,8 +34,8 @@ function checkValue(arr, cell, cellValue) {
             isCorrect = false;
             break;
         }
-    };
-    return isCorrect;        
+    }
+    return isCorrect;
 }
 
 function findRecursive(arr){
@@ -74,13 +46,13 @@ function findRecursive(arr){
                     cell.value = i;
                     if(findRecursive(arr) !== false){
                         return findRecursive(arr);
-                    }                                      
-                }               
+                    }
+                }
             }
             cell.value = 0;
             return false;
         }
-    };
+    }
     return arr;
 }
 
